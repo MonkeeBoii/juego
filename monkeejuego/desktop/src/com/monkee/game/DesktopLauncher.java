@@ -1,15 +1,15 @@
-package com.monkee.mario;
+package com.monkee.game;
 
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
-import com.monkee.mario.MarioBros;
+import MyGame.MyGame;
 
 // Please note that on macOS your application needs to be started with the -XstartOnFirstThread JVM argument
 public class DesktopLauncher {
 	public static void main (String[] arg) {
 		Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
 		config.setForegroundFPS(60);
-		config.setTitle("marioBros");
-		new Lwjgl3Application(new MarioBros(), config);
+		config.setTitle("monkeeGame");
+		new Lwjgl3Application(new MyGame(), config);
 	}
 }
