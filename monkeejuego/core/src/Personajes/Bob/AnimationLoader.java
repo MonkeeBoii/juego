@@ -11,17 +11,21 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 public class AnimationLoader {
 
-    public static Animation<TextureRegion> loadAnimation(String spritesheetPath, int startX, int startY, int frameWidth, int frameHeight, int frameCount, float frameDuration) {
-    Texture spritesheet = new Texture(Gdx.files.internal(spritesheetPath));
-    TextureRegion[][] tmp = TextureRegion.split(spritesheet, frameWidth, frameHeight);
-    TextureRegion[] frames = new TextureRegion[frameCount];
+    public static Animation<TextureRegion> loadAnimation(String spritesheetPath, int startX, int startY, int frameWidth, int frameHeight, int frameCount, float frameDuration, boolean flip) {
+        Texture spritesheet = new Texture(Gdx.files.internal(spritesheetPath));
+        TextureRegion[][] tmp = TextureRegion.split(spritesheet, frameWidth, frameHeight);
+        TextureRegion[] frames = new TextureRegion[frameCount];
 
-    int index = 0;
-    for (int j = startX; j < startX + frameCount; j++) {
-        frames[index++] = tmp[startY][j];
+        int index = 0;
+        for (int j = startX; j < startX + frameCount; j++) {
+            TextureRegion frame = tmp[startY][j]; // Aquí se obtiene cada TextureRegion de la matriz tmp
+            if (flip) {
+                // Si es necesario, refleja horizontalmente la TextureRegion
+                frame.flip(true, false);
+            }
+            frames[index++] = frame;
+
+        }
+        return new Animation<>(frameDuration, frames);
     }
-
-    return new Animation<>(frameDuration, frames);
-}
-
 }

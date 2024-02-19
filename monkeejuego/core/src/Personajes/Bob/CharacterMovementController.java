@@ -74,8 +74,10 @@ public class CharacterMovementController {
 
         if (derechaPresionado) {
             moverDerecha(delta);
+            character.vista = Character.Vista.DERECHA;
         } else if (izquierdaPresionado) {
             moverIzquierda(delta);
+            character.vista = Character.Vista.IZQUIERDA;
         }
 
         if (arribaPresionado) {

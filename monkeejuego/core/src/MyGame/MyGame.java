@@ -49,7 +49,6 @@ public class MyGame extends ApplicationAdapter {
         
         batch.begin();
         character.render(batch, movementController.comprobarBotones(delta));
-        character.mousePosition();
         batch.end();
         camera.unproject(mousePosition3D);
 
