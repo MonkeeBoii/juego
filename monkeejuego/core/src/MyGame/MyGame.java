@@ -1,11 +1,11 @@
 package MyGame;
 
-import Screen.MainScreen;
+import Screen.PantallaInicio;
 import com.badlogic.gdx.Game;
 
 public class MyGame extends Game {
 
     public void create() {
-        this.setScreen(new MainScreen());
+        this.setScreen(new PantallaInicio());
     }
 }

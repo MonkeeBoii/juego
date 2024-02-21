@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import Personajes.Bob.Character;
+import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapRenderer;
@@ -58,7 +59,7 @@ public class MainScreen implements Screen {
             character.setPosition(0, character.getY());
         }
         if(character.getY() <= 0){
-            character.setPosition(10, 8);
+            ((Game)Gdx.app.getApplicationListener()).setScreen(new PantallaInicio());
         }
         if(character.getX() >= 228){
             camera.position.x = 228.7f;
@@ -83,16 +84,13 @@ public class MainScreen implements Screen {
 
     @Override
     public void pause() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
     public void resume() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
     public void hide() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 }
