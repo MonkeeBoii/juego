@@ -29,7 +29,7 @@ public class OptionScreen implements Screen {
     Stage stage;
     Preferences prefs = Gdx.app.getPreferences("MyPreferenceFile");
     Music musicaFondo;
-    AssetManager assetManager;
+    
     boolean myBooleanValue = prefs.getBoolean("myBooleanKey", false);
     Integer num = prefs.getInteger("myInteger", 0);
 
@@ -38,13 +38,6 @@ public class OptionScreen implements Screen {
 
         stage = new Stage();
         Gdx.input.setInputProcessor(stage);
-        
-        assetManager = new AssetManager();
-        assetManager.load("Music/menu.ogg", Music.class);
-        assetManager.finishLoading();
-        musicaFondo = assetManager.get("Music/menu.ogg", Music.class);
-        musicaFondo.setLooping(true);
-        musicaFondo.setVolume(0.5f);
         
         Drawable botnAudio = new TextureRegionDrawable(new Texture(Gdx.files.internal("gui/botonOption.png")));
         Drawable audio = new TextureRegionDrawable(new Texture(Gdx.files.internal("gui/altavoz.png")));
