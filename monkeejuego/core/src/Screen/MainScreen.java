@@ -1,12 +1,20 @@
 package Screen;
 
+import Object.Bala;
+import Object.TextureUtils;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import Personajes.Bob.Character;
 import com.badlogic.gdx.Game;
+import com.badlogic.gdx.Input;
+import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapRenderer;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
@@ -25,6 +33,16 @@ public class MainScreen implements Screen {
     TiledMap map;
     ContactListener listener;
     boolean jefe;
+    Bala bala;
+    Music musicaFondo, musicaJefe;
+    
+    Integer num;
+    boolean myBooleanValue;
+    
+    //skins
+    TextureRegion[][] grid;
+    TextureRegion desiredRegion;
+    Texture individualTexture;
 
     @Override
     public void dispose() {
@@ -33,6 +51,11 @@ public class MainScreen implements Screen {
 
     @Override
     public void show() {
+        Preferences prefs = Gdx.app.getPreferences("MyPreferenceFile");
+
+        myBooleanValue = prefs.getBoolean("myBooleanKey", false);
+        num = prefs.getInteger("myInteger", 0);
+        
         map = new TmxMapLoader().load("level1.tmx");
         final float pixelsPerTile = 32;
         renderer = new OrthogonalTiledMapRenderer(map, 1 / pixelsPerTile);
@@ -44,37 +67,52 @@ public class MainScreen implements Screen {
         character = new Character(1);
         character.layer = (TiledMapTileLayer) map.getLayers().get("walls");
         character.setPosition(10, 5);
-        stage.addActor(character);
+
+        grid = TextureRegion.split(new Texture("Sprites.png"), (int) 32, (int) 32);
+        desiredRegion = grid[27][5];
+        individualTexture = TextureUtils.createTextureFromRegion(desiredRegion);
+            stage.addActor(character);
+        
     }
 
     @Override
     public void render(float delta) {
-        
+
         Gdx.gl.glClearColor(0.5f, 0.5f, 1, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        if(character.getX() >= 10 && jefe == false){
+        if (character.getX() >= 10 && jefe == false) {
             camera.position.x = character.getX();
         }
-        if(character.getX() <= 0){
+        if (character.getX() <= 0) {
             character.setPosition(0, character.getY());
         }
-        if(character.getY() <= 0){
-            ((Game)Gdx.app.getApplicationListener()).setScreen(new PantallaInicio());
+        if (character.getY() <= 0) {
+            ((Game) Gdx.app.getApplicationListener()).setScreen(new PantallaInicio());
         }
-        if(character.getX() >= 228){
+        if (character.getX() >= 228) {
             camera.position.x = 228.7f;
             jefe = true;
         }
         camera.update();
 
- 
+        if ((Gdx.input.isKeyPressed(Input.Keys.E) || Gdx.input.isTouched()) && Bala.puedeDisparar()) {
+
+            if (character.isFacingRight) {
+                bala = new Bala(individualTexture, character.getX() - 0.2f, character.getY() - 0.6f, 20);
+            } else {
+                bala = new Bala(individualTexture, character.getX() - 0.3f, character.getY() - 0.6f, -20);
+            }
+            bala.cambiarTamaño(1.5f, 1.5f);
+            stage.addActor(bala);
+        }
+        Bala.actualizarCooldown();
+
         renderer.setView(camera);
         renderer.render();
 
         stage.act(delta);
         stage.draw();
-        
-       
+
     }
 
     @Override

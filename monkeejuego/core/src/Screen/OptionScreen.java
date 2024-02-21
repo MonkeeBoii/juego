@@ -8,6 +8,8 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
@@ -26,7 +28,8 @@ public class OptionScreen implements Screen {
 
     Stage stage;
     Preferences prefs = Gdx.app.getPreferences("MyPreferenceFile");
-
+    Music musicaFondo;
+    AssetManager assetManager;
     boolean myBooleanValue = prefs.getBoolean("myBooleanKey", false);
     Integer num = prefs.getInteger("myInteger", 0);
 
@@ -35,7 +38,14 @@ public class OptionScreen implements Screen {
 
         stage = new Stage();
         Gdx.input.setInputProcessor(stage);
-
+        
+        assetManager = new AssetManager();
+        assetManager.load("Music/menu.ogg", Music.class);
+        assetManager.finishLoading();
+        musicaFondo = assetManager.get("Music/menu.ogg", Music.class);
+        musicaFondo.setLooping(true);
+        musicaFondo.setVolume(0.5f);
+        
         Drawable botnAudio = new TextureRegionDrawable(new Texture(Gdx.files.internal("gui/botonOption.png")));
         Drawable audio = new TextureRegionDrawable(new Texture(Gdx.files.internal("gui/altavoz.png")));
         Drawable audioMute = new TextureRegionDrawable(new Texture(Gdx.files.internal("gui/altavozMute.png")));
@@ -50,7 +60,7 @@ public class OptionScreen implements Screen {
         }
 
         ImageButton botnAudioInterfaz = new ImageButton(botnAudioStyle);
-        botnAudioInterfaz.setPosition((stage.getWidth() - botnAudioInterfaz.getWidth()) / 2 - 100, 200);
+        botnAudioInterfaz.setPosition((stage.getWidth() - botnAudioInterfaz.getWidth()) / 2 - 100, 500);
         botnAudioInterfaz.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -60,8 +70,10 @@ public class OptionScreen implements Screen {
                 myBooleanValue = prefs.getBoolean("myBooleanKey", false);
                 if (myBooleanValue) {
                     botnAudioInterfaz.getStyle().imageUp = audio;
+                    musicaFondo.play();
                 } else {
                     botnAudioInterfaz.getStyle().imageUp = audioMute;
+                    musicaFondo.stop();
                 }
             }
         });
@@ -87,7 +99,7 @@ public class OptionScreen implements Screen {
         }
 
         ImageButton botnDer = new ImageButton(botnDerStyle);
-        botnDer.setPosition((stage.getWidth() - botnAudioInterfaz.getWidth()) / 2 + 100, 200);
+        botnDer.setPosition((stage.getWidth() - botnAudioInterfaz.getWidth()) / 2 + 100, 500);
         botnDer.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {

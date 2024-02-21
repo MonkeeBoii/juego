@@ -2,7 +2,10 @@ package Screen;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
@@ -20,6 +23,10 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 public class PantallaInicio implements Screen {
 
     Stage stage;
+    Preferences prefs = Gdx.app.getPreferences("MyPreferenceFile");
+    boolean myBooleanValue = prefs.getBoolean("myBooleanKey", false);
+    Integer num = prefs.getInteger("myInteger", 0);
+    
 
     @Override
     public void show() {
@@ -73,9 +80,9 @@ public class PantallaInicio implements Screen {
                 Gdx.app.exit();
             }
         });
-        inicio.setPosition((stage.getWidth() - inicio.getWidth()) / 2, 260);
-        optionImage.setPosition((stage.getWidth() - inicio.getWidth()) / 2, 200);
-        exitImage.setPosition((stage.getWidth() - inicio.getWidth()) / 2, 140);
+        inicio.setPosition((stage.getWidth() - inicio.getWidth()) / 2, 700);
+        optionImage.setPosition((stage.getWidth() - inicio.getWidth()) / 2, 630);
+        exitImage.setPosition((stage.getWidth() - inicio.getWidth()) / 2, 560);
 
         Texture fondoTexture = new Texture(Gdx.files.internal("gui/fondo.png"));
         Image fondo = new Image(fondoTexture);
@@ -88,17 +95,16 @@ public class PantallaInicio implements Screen {
     }
 
     @Override
-    public void render(float delta) { 
+    public void render(float delta) {
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-
+        
         stage.act(delta);
         stage.draw();
     }
 
     @Override
     public void resize(int width, int height) {
-
     }
 
     @Override

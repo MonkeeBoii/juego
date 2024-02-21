@@ -1,6 +1,5 @@
 package Personajes.Bob;
 
-import Object.Bullet;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Texture;
@@ -12,17 +11,18 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image;
 
 public class Character extends Image {
 
-    TextureRegion stand, jump, bulletObj;
-    Animation walk;
-
+    TextureRegion stand, jump, quietoDisparo;
+    Animation walk, disparo, quieto, quieto1;
     float time = 0;
     float xVelocity = 0;
     float yVelocity = 0;
     boolean canJump = false;
-    boolean isFacingRight = true;
+    public boolean isFacingRight = true;
     public TiledMapTileLayer layer;
-    Texture bulletTexture;
-    Bullet bullet;
+    float inactivityTime = 0;
+    float incativityTimeAnimation = 0;
+    final float QUIET_TIME_THRESHOLD = 3;
+    final float QUIET_TIME_THRESHOLD_ANIMATION = 5;
 
     final float GRAVITY = -1.5f;
     final float MAX_VELOCITY = 9f;
@@ -35,36 +35,40 @@ public class Character extends Image {
 
         Texture koalaTexture = new Texture("Sprites.png");
         TextureRegion[][] grid = TextureRegion.split(koalaTexture, (int) width, (int) height);
-        bulletTexture = new Texture("bolt1_strip.png");
-        TextureRegion[][] bulletArray = TextureRegion.split(bulletTexture, (int) 10, (int) 10);
         stand = grid[7][0];
-        jump = grid[8][0];
-        bulletObj = bulletArray[0][0];
+        jump = grid[8][1];
+        quietoDisparo = grid[7][1];
+        quieto = new Animation(0.5f, grid[10][0], grid[10][1], grid[10][2], grid[11][0]);
+        quieto1 = new Animation(0.2f, grid[11][1], grid[11][2], grid[11][3]);
+        disparo = new Animation(0.20f, grid[26][0], grid[26][1], grid[26][2], grid[26][3]);
         walk = new Animation(0.15f, grid[14][0], grid[14][1], grid[14][2], grid[14][3]);
         walk.setPlayMode(Animation.PlayMode.LOOP_PINGPONG);
     }
 
     public void act(float delta) {
         time = time + delta;
-
-        boolean upTouched = Gdx.input.isTouched() && Gdx.input.getY() < Gdx.graphics.getHeight() / 2;
-        if (Gdx.input.isKeyPressed(Input.Keys.SPACE) || upTouched) {
+        if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
             if (canJump) {
                 yVelocity = yVelocity + MAX_VELOCITY * 3;
             }
             canJump = false;
         }
 
-        boolean leftTouched = Gdx.input.isTouched() && Gdx.input.getX() < Gdx.graphics.getWidth() / 3;
-        if (Gdx.input.isKeyPressed(Input.Keys.A) || leftTouched) {
+        if (Gdx.input.isKeyPressed(Input.Keys.A)) {
             xVelocity = -1 * MAX_VELOCITY;
             isFacingRight = false;
         }
 
-        boolean rightTouched = Gdx.input.isTouched() && Gdx.input.getX() > Gdx.graphics.getWidth() * 2 / 3;
-        if (Gdx.input.isKeyPressed(Input.Keys.D) || rightTouched) {
+        if (Gdx.input.isKeyPressed(Input.Keys.D)) {
             xVelocity = MAX_VELOCITY;
             isFacingRight = true;
+        }
+        if (Gdx.input.isKeyPressed(Input.Keys.A) || Gdx.input.isKeyPressed(Input.Keys.D) || (Gdx.input.isKeyPressed(Input.Keys.SPACE) && canJump) || (Gdx.input.isTouched() || Gdx.input.isKeyPressed(Input.Keys.E))) {
+            inactivityTime = 0;
+            incativityTimeAnimation = 0;
+        } else {
+            inactivityTime += delta;
+            incativityTimeAnimation += delta;
         }
 
         yVelocity = yVelocity + GRAVITY;
@@ -98,26 +102,28 @@ public class Character extends Image {
             frame = jump;
         } else if (xVelocity != 0) {
             frame = (TextureRegion) walk.getKeyFrame(time);
+        } else if (inactivityTime >= QUIET_TIME_THRESHOLD) {
+            frame = (TextureRegion) quieto.getKeyFrame(time, true);
+            if (incativityTimeAnimation >= QUIET_TIME_THRESHOLD_ANIMATION) {
+                frame = (TextureRegion) quieto1.getKeyFrame(time, true);
+            }
+            if (incativityTimeAnimation >= 5.9) {
+                incativityTimeAnimation = 0;
+                inactivityTime = 0;
+            }
         } else {
             frame = stand;
+            if (Gdx.input.isTouched() || Gdx.input.isKeyPressed(Input.Keys.E)) {
+                frame = quietoDisparo;
+            }
         }
 
         if (isFacingRight) {
             batch.draw(frame, this.getX(), this.getY(), this.getWidth(), this.getHeight());
-            if (Gdx.input.isKeyPressed(Input.Keys.E)) {
-                bullet = new Bullet(new TextureRegion(bulletTexture), this.getX(), this.getY());
-                bullet.setActive(true);
-            }
         } else {
             batch.draw(frame, this.getX() + this.getWidth(), this.getY(), -1 * this.getWidth(), this.getHeight());
-            if (Gdx.input.isKeyPressed(Input.Keys.E)) {
-                
-            }
         }
-        if(bullet != null){
-            bullet.update(time);
-        }
-        
+
     }
 
     private boolean canMoveTo(float startX, float startY) {
