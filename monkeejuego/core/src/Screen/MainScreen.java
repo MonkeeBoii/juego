@@ -111,7 +111,6 @@ public class MainScreen implements Screen {
             } else {
                 bala = new Bala(individualTexture, character.getX() - 0.3f, character.getY() - 0.3f, -20, map);
             }
-            bala.cambiarTamaño(1.5f, 1.0f);
             stage.addActor(bala);
         }
         Bala.actualizarCooldown();
