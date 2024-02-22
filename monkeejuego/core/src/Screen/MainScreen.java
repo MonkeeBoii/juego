@@ -12,7 +12,6 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.TiledMap;
@@ -20,7 +19,6 @@ import com.badlogic.gdx.maps.tiled.TiledMapRenderer;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
-import com.badlogic.gdx.physics.bullet.collision.ContactListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 
 public class MainScreen implements Screen {
@@ -109,11 +107,11 @@ public class MainScreen implements Screen {
         if ((Gdx.input.isKeyPressed(Input.Keys.E) || Gdx.input.isTouched()) && Bala.puedeDisparar()) {
 
             if (character.isFacingRight) {
-                bala = new Bala(individualTexture, character.getX() - 0.2f, character.getY() - 0.6f, 20, map);
+                bala = new Bala(individualTexture, character.getX() - 0.2f, character.getY() - 0.3f, 20, map);
             } else {
-                bala = new Bala(individualTexture, character.getX() - 0.3f, character.getY() - 0.6f, -20, map);
+                bala = new Bala(individualTexture, character.getX() - 0.3f, character.getY() - 0.3f, -20, map);
             }
-            bala.cambiarTamaño(1.5f, 1.5f);
+            bala.cambiarTamaño(1.5f, 1.0f);
             stage.addActor(bala);
         }
         Bala.actualizarCooldown();

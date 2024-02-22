@@ -1,7 +1,6 @@
 package Object;
 
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.maps.MapLayers;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
@@ -9,7 +8,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image;
 public class Bala extends Image {
 
     private float VELOCIDAD = 0;
-    private static final int COOLDOWN_TIME = 20;
+    private static final int COOLDOWN_TIME = 15;
     private static int cooldownCounter = 0;
     private TiledMap tiledMap;
     public TiledMapTileLayer layer;
@@ -23,25 +22,23 @@ public class Bala extends Image {
         setX(origenX);
         setY(origenY);
         setPosition(origenX, origenY);
+        layer = (TiledMapTileLayer) this.tiledMap.getLayers().get("walls");
     }
 
     @Override
     public void act(float delta) {
         super.act(delta);
 
-        // Calcular la nueva posición de la bala
         float newPosX = getX() + VELOCIDAD * delta;
         float newPosY = getY();
-
-        if (canMoveTo(getX() + newPosX, getY()) == false) {
-            this.remove();
-        }
-
-        // Verificar si la bala ha salido de la pantalla
+        setPosition(newPosX, newPosY);
         if (newPosY + getHeight() > getStage().getHeight()) {
             remove();
         }
-
+        System.out.println("altura bala : " + getHeight());
+        if (!canMoveTo(newPosX, getHeight() + newPosY)) {
+            remove();
+        }
     }
 
     public static boolean puedeDisparar() {
@@ -65,8 +62,8 @@ public class Bala extends Image {
         float endX = startX + this.getWidth();
         float endY = startY + this.getHeight();
 
-        for (float x = startX; x < endX; x += 0.1f) {
-            for (float y = startY; y < endY; y += 0.1f) {
+        for (float x = startX; x < endX; x += 1.0f) { // Incremento ajustado a 1.0f
+            for (float y = startY; y < endY; y += 1.0f) { // Incremento ajustado a 1.0f
                 if (layer.getCell((int) x, (int) y) != null) {
                     return false;
                 }
@@ -74,5 +71,5 @@ public class Bala extends Image {
         }
 
         return true;
-    }   
+    }
 }
