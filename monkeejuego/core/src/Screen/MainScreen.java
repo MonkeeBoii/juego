@@ -1,6 +1,7 @@
 package Screen;
 
 import Object.Bala;
+import Object.Musica;
 import Object.TextureUtils;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
@@ -11,7 +12,6 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -31,18 +31,20 @@ public class MainScreen implements Screen {
     private TiledMapRenderer renderer;
     Stage stage;
     TiledMap map;
-    ContactListener listener;
     boolean jefe;
     Bala bala;
-    Music musicaFondo, musicaJefe;
-    
-    Integer num;
     boolean myBooleanValue;
-    
+
     //skins
     TextureRegion[][] grid;
     TextureRegion desiredRegion;
     Texture individualTexture;
+
+    Musica music;
+
+    public MainScreen(Musica music) {
+        this.music = music;
+    }
 
     @Override
     public void dispose() {
@@ -54,8 +56,8 @@ public class MainScreen implements Screen {
         Preferences prefs = Gdx.app.getPreferences("MyPreferenceFile");
 
         myBooleanValue = prefs.getBoolean("myBooleanKey", false);
-        num = prefs.getInteger("myInteger", 0);
-        
+
+
         map = new TmxMapLoader().load("level1.tmx");
         final float pixelsPerTile = 32;
         renderer = new OrthogonalTiledMapRenderer(map, 1 / pixelsPerTile);
@@ -71,8 +73,12 @@ public class MainScreen implements Screen {
         grid = TextureRegion.split(new Texture("Sprites.png"), (int) 32, (int) 32);
         desiredRegion = grid[27][5];
         individualTexture = TextureUtils.createTextureFromRegion(desiredRegion);
-            stage.addActor(character);
         
+        if(myBooleanValue){
+            music.getMusic("level1").play();
+        }
+        stage.addActor(character);
+
     }
 
     @Override
@@ -87,20 +93,25 @@ public class MainScreen implements Screen {
             character.setPosition(0, character.getY());
         }
         if (character.getY() <= 0) {
-            ((Game) Gdx.app.getApplicationListener()).setScreen(new PantallaInicio());
+            music.stopMusic("level1");
+            ((Game) Gdx.app.getApplicationListener()).setScreen(new PantallaInicio(music));
         }
         if (character.getX() >= 228) {
             camera.position.x = 228.7f;
             jefe = true;
+        }
+        if(jefe && myBooleanValue){
+            music.stopMusic("level1");
+            music.getMusic("jefe").play();
         }
         camera.update();
 
         if ((Gdx.input.isKeyPressed(Input.Keys.E) || Gdx.input.isTouched()) && Bala.puedeDisparar()) {
 
             if (character.isFacingRight) {
-                bala = new Bala(individualTexture, character.getX() - 0.2f, character.getY() - 0.6f, 20);
+                bala = new Bala(individualTexture, character.getX() - 0.2f, character.getY() - 0.6f, 20, map);
             } else {
-                bala = new Bala(individualTexture, character.getX() - 0.3f, character.getY() - 0.6f, -20);
+                bala = new Bala(individualTexture, character.getX() - 0.3f, character.getY() - 0.6f, -20, map);
             }
             bala.cambiarTamaño(1.5f, 1.5f);
             stage.addActor(bala);

@@ -1,11 +1,10 @@
 package Screen;
 
+import Object.Musica;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.assets.AssetManager;
-import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
@@ -24,14 +23,18 @@ public class PantallaInicio implements Screen {
 
     Stage stage;
     Preferences prefs = Gdx.app.getPreferences("MyPreferenceFile");
-    boolean myBooleanValue = prefs.getBoolean("myBooleanKey", false);
-    Integer num = prefs.getInteger("myInteger", 0);
+    Musica music;
     
+    public PantallaInicio(Musica music){
+        this.music = music;
+    }
 
     @Override
     public void show() {
         stage = new Stage();
         Gdx.input.setInputProcessor(stage);
+       
+        
 
         Drawable botnPulsado = new TextureRegionDrawable(new Texture(Gdx.files.internal("gui/boton.png")));
         Drawable drawable = new TextureRegionDrawable(new Texture(Gdx.files.internal("gui/botonPulsado.png")));
@@ -61,17 +64,21 @@ public class PantallaInicio implements Screen {
         ImageButton inicio = new ImageButton(estiloBoton);
         ImageButton optionImage = new ImageButton(estiloBotonoption);
         ImageButton exitImage = new ImageButton(estiloBotonexit);
+        
 
         inicio.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                ((Game) Gdx.app.getApplicationListener()).setScreen(new MainScreen());
+                music.stopMusic("fondo");
+                ((Game) Gdx.app.getApplicationListener()).setScreen(new MainScreen(music));
+                dispose();
             }
         });
         optionImage.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                ((Game) Gdx.app.getApplicationListener()).setScreen(new OptionScreen());
+                ((Game) Gdx.app.getApplicationListener()).setScreen(new OptionScreen(music));
+                dispose();
             }
         });
         exitImage.addListener(new ClickListener() {
@@ -86,8 +93,15 @@ public class PantallaInicio implements Screen {
 
         Texture fondoTexture = new Texture(Gdx.files.internal("gui/fondo.png"));
         Image fondo = new Image(fondoTexture);
+        
         fondo.setSize(stage.getWidth(), stage.getHeight());
-
+        boolean myBooleanValue = prefs.getBoolean("myBooleanKey", false);
+        if (myBooleanValue) {
+            music.getMusic("fondo").play();
+        } else {
+            music.stopMusic("fondo");
+        }
+        
         stage.addActor(fondo);
         stage.addActor(inicio);
         stage.addActor(optionImage);
@@ -98,7 +112,7 @@ public class PantallaInicio implements Screen {
     public void render(float delta) {
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        
+
         stage.act(delta);
         stage.draw();
     }
@@ -109,6 +123,7 @@ public class PantallaInicio implements Screen {
 
     @Override
     public void pause() {
+        
     }
 
     @Override
